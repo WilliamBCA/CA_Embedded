@@ -70,8 +70,11 @@ static ADS1120_input nextInput(ADS1120_input current)
     return INPUT_CALIBREATE;
 }
 
-#define WATER_100 1615.0
-#define WATER_0   -430.0
+//In the linear relation Temp = ADC * calibrationScalar + calibrationConstant 
+//the following constants have been measured:
+double calibrationScalar = 0.0474;
+double calibrationConstant = 22.734;
+
 static double adc2Temp(int16_t adcValue, int16_t calibration)
 {
     if (adcValue == 0x7fff)
@@ -79,7 +82,7 @@ static double adc2Temp(int16_t adcValue, int16_t calibration)
     // TODO: How to detect a short?
 
     adcValue -= calibration;
-    return (adcValue - WATER_0)/(WATER_100 - WATER_0) * 100;
+    return (adcValue * calibrationScalar + calibrationConstant);
 }
 
 // Helper function to test if device has new data.
